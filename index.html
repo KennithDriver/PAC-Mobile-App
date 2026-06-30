@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>PAC Mobile</title>
+
+<link rel="manifest" href="manifest.json">
+
+<style>
+
+body{
+    font-family: Arial, sans-serif;
+    background:#111827;
+    color:white;
+    margin:0;
+    padding:20px;
+}
+
+.container{
+    max-width:600px;
+    margin:auto;
+}
+
+h1{
+    text-align:center;
+    color:#60a5fa;
+}
+
+.subtitle{
+    text-align:center;
+    color:#c084fc;
+    margin-bottom:30px;
+}
+
+.card{
+    background:#1f2937;
+    padding:20px;
+    border-radius:12px;
+    margin-bottom:20px;
+}
+
+input,
+textarea{
+    width:100%;
+    padding:12px;
+    margin-top:10px;
+    margin-bottom:10px;
+    border:none;
+    border-radius:8px;
+    font-size:16px;
+    box-sizing:border-box;
+}
+
+button{
+    width:100%;
+    padding:12px;
+    margin-top:10px;
+    background:#2563eb;
+    color:white;
+    border:none;
+    border-radius:8px;
+    font-size:16px;
+    cursor:pointer;
+}
+
+button:hover{
+    background:#1d4ed8;
+}
+
+.output{
+    margin-top:15px;
+    color:#d1d5db;
+}
+
+ul{
+    padding-left:20px;
+}
+
+li{
+    margin-bottom:10px;
+}
+
+.task-buttons{
+    margin-top:5px;
+}
+
+.task-buttons button{
+    width:auto;
+    margin-right:5px;
+    padding:5px 10px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>PAC Mobile</h1>
+<p class="subtitle">Personal Assistant Command Center</p>
+
+<div class="card">
+
+<h2>Today's Priority</h2>
+
+<input
+id="priorityInput"
+type="text"
+placeholder="What matters most today?"
+>
+
+<button onclick="savePriority()">
+Save Priority
+</button>
+
+<div id="priorityDisplay" class="output">
+No priority saved yet.
+</div>
+
+</div>
+
+<div class="card">
+
+<h2>Task Manager</h2>
+
+<input
+id="taskInput"
+type="text"
+placeholder="Add a task for today"
+>
+
+<button onclick="addTask()">
+Add Task
+</button>
+
+<ul id="taskList"></ul>
+
+</div>
+
+<div class="card">
+
+<h2>Quick Memory</h2>
+
+<textarea
+id="memoryInput"
+rows="4"
+placeholder="What should PAC remember?"
+></textarea>
+
+<button onclick="saveMemory()">
+Save Memory
+</button>
+
+<div id="memoryDisplay" class="output">
+No memories saved yet.
+</div>
+
+</div>
+
+<div class="card">
+
+<h2>Goals</h2>
+
+<ul>
+<li>KDBS Development</li>
+<li>CTU Accounting Degree</li>
+<li>Increase Income</li>
+<li>Sell Old Camper</li>
+<li>PAC Development</li>
+</ul>
+
+</div>
+
+</div>
+
+<script>
+
+function savePriority(){
+
+const value =
+document.getElementById("priorityInput").value;
+
+localStorage.setItem("pacPriority", value);
+
+document.getElementById("priorityDisplay").innerText = value;
+
+}
+
+function saveMemory(){
+
+const value =
+document.getElementById("memoryInput").value;
+
+localStorage.setItem("pacMemory", value);
+
+document.getElementById("memoryDisplay").innerText = value;
+
+}
+
+let tasks =
+JSON.parse(localStorage.getItem("pacTasks")) || [];
+
+function addTask(){
+
+const input =
+document.getElementById("taskInput");
+
+const task =
+input.value.trim();
+
+if(task === "") return;
+
+tasks.push({
+text: task,
+done: false
+});
+
+localStorage.setItem(
+"pacTasks",
+JSON.stringify(tasks)
+);
+
+input.value = "";
+
+renderTasks();
+
+}
+
+function toggleTask(index){
+
+tasks[index].done =
+!tasks[index].done;
+
+localStorage.setItem(
+"pacTasks",
+JSON.stringify(tasks)
+);
+
+renderTasks();
+
+}
+
+function deleteTask(index){
+
+tasks.splice(index,1);
+
+localStorage.setItem(
+"pacTasks",
+JSON.stringify(tasks)
+);
+
+renderTasks();
+
+}
+
+function renderTasks(){
+
+const list =
+document.getElementById("taskList");
+
+list.innerHTML = "";
+
+tasks.forEach((task,index)=>{
+
+const li =
+document.createElement("li");
+
+li.innerHTML = `
+<span style="text-decoration:${task.done ? "line-through" : "none"}">
+${task.text}
+</span>
+
+<div class="task-buttons">
+<button onclick="toggleTask(${index})">
+Done
+</button>
+
+<button onclick="deleteTask(${index})">
+Delete
+</button>
+</div>
+`;
+
+list.appendChild(li);
+
+});
+
+}
+
+window.onload = function(){
+
+const priority =
+localStorage.getItem("pacPriority");
+
+const memory =
+localStorage.getItem("pacMemory");
+
+if(priority){
+
+document.getElementById("priorityDisplay").innerText =
+priority;
+
+}
+
+if(memory){
+
+document.getElementById("memoryDisplay").innerText =
+memory;
+
+}
+
+renderTasks();
+
+};
+
+if("serviceWorker" in navigator){
+
+navigator.serviceWorker.register(
+"service-worker.js"
+)
+.then(() => console.log(
+"PAC Service Worker Registered"
+));
+
+}
+
+</script>
+
+</body>
+</html>

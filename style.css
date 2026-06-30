@@ -1,0 +1,41 @@
+body {
+  font-family: Arial, sans-serif;
+  background: #111827;
+  color: white;
+  margin: 0;
+  padding: 20px;
+}
+
+.app {
+  max-width: 500px;
+  margin: auto;
+}
+
+h1 {
+  color: #60a5fa;
+}
+
+.subtitle {
+  color: #c084fc;
+}
+
+section {
+  background: #1f2937;
+  padding: 15px;
+  margin-top: 20px;
+  border-radius: 10px;
+}
+
+input, textarea, button {
+  width: 100%;
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+}
+
+button {
+  background: #2563eb;
+  color: white;
+  font-weight: bold;
+}

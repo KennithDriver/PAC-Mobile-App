@@ -1,0 +1,8 @@
+{
+  "family": true,
+  "business": true,
+  "education": true,
+  "income": true,
+  "devotional": true,
+  "health": false
+}
